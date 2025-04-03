@@ -15,6 +15,41 @@ public class RentalSystem {
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
+    
+ // Method to save vehicle details to vehicles.txt
+     public void saveVehicle(Vehicle vehicle) {
+       try (FileWriter fw = new FileWriter("vehicles.txt", true); // Open in append mode
+            PrintWriter writer = new PrintWriter(fw)) {
+           // Assuming Vehicle has methods like getLicensePlate(), getMake(), etc.
+           writer.println(vehicle.getLicensePlate() + "," + vehicle.getMake() + "," + vehicle.getModel() + "," + vehicle.getYear());
+       } catch (IOException e) {
+           System.err.println("Error saving vehicle: " + e.getMessage());
+       }
+   }
+// Method to save customer details to customers.txt
+   public void saveCustomer(Customer customer) {
+       try (FileWriter fw = new FileWriter("customers.txt", true); // Open in append mode
+            PrintWriter writer = new PrintWriter(fw)) {
+           // Assuming Customer has methods like getCustomerId(), getCustomerName()
+           writer.println(customer.getCustomerId() + "," + customer.getCustomerName());
+       } catch (IOException e) {
+           System.err.println("Error saving customer: " + e.getMessage());
+       }
+   }
+   
+   // Method to save rental record details to rental_records.txt
+   public void saveRecord(RentalRecord record) {
+       try (FileWriter fw = new FileWriter("rental_records.txt", true); // Open in append mode
+            PrintWriter writer = new PrintWriter(fw)) {
+           // Assuming RentalRecord has methods like getVehicle(), getCustomer(), getDate(), etc.
+           writer.println(record.getVehicle().getLicensePlate() + "," + record.getCustomer().getCustomerName() + ","
+                   + record.getRecordDate() + "," + record.getAmount() + "," + record.getRecordDate());
+       } catch (IOException e) {
+           System.err.println("Error saving rental record: " + e.getMessage());
+       }
+   }
+
+    
 
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
