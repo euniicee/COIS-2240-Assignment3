@@ -1,6 +1,10 @@
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 
 public class RentalSystem {
 	private static RentalSystem instance;
@@ -55,12 +59,28 @@ public class RentalSystem {
 
     
 
-    public void addVehicle(Vehicle vehicle) {
-        vehicles.add(vehicle);
+    public boolean addVehicle(Vehicle vehicle) {
+    	// Check if the vehicle with the same license plate already exists
+        if (findVehicleByPlate(vehicle.getLicensePlate()) != null) {
+            System.out.println("Error: A vehicle with this license plate already exists.");
+            return false; // Return false to indicate a duplicate
+        }
+        // If no duplicate is found, add the vehicle
+           vehicles.add(vehicle);
+        // Save the vehicle to the file
+           saveVehicle(vehicle);  
     }
 
-    public void addCustomer(Customer customer) {
+    public boolean addCustomer(Customer customer) {
+    	// Check if customer with the same ID already exists
+        if (findCustomerById(customer.getCustomerId()) != null) {
+            System.out.println("Error: A customer with this ID already exists.");
+            return false; // Return false to indicate a duplicate
+        }
+        // If no duplicate is found, add the customer
         customers.add(customer);
+     // Save the customer to the file
+        saveCustomer(customer);  
     }
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
