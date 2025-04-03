@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class RentalSystem {
 	private static RentalSystem instance;
+	private static RentalSystem instance;
 	public static RentalSystem getInstance() {
-        // 4. If the instance is null, create it
+        // If the instance is null, create it
         if (instance == null) {
             instance = new RentalSystem();
         }
         return instance;
-    }
-	
+	}
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
