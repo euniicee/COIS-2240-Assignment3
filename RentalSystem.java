@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class RentalSystem {
 	private static RentalSystem instance;
-	private static RentalSystem instance;
 	public static RentalSystem getInstance() {
         // If the instance is null, create it
         if (instance == null) {
@@ -12,6 +11,10 @@ public class RentalSystem {
         }
         return instance;
 	}
+	 private RentalSystem() {
+	    loadData();  // Load the saved data when the object is created
+	 }
+	 
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
@@ -26,7 +29,7 @@ public class RentalSystem {
            System.err.println("Error saving vehicle: " + e.getMessage());
        }
    }
-// Method to save customer details to customers.txt
+/// Method to save customer details to customers.txt
    public void saveCustomer(Customer customer) {
        try (FileWriter fw = new FileWriter("customers.txt", true); // Open in append mode
             PrintWriter writer = new PrintWriter(fw)) {
@@ -48,6 +51,7 @@ public class RentalSystem {
            System.err.println("Error saving rental record: " + e.getMessage());
        }
    }
+   
 
     
 
@@ -133,4 +137,69 @@ public class RentalSystem {
                 return c;
         return null;
     }
+    
+    
+    private void loadData() {
+    	 // Load vehicles from vehicles.txt
+    try (BufferedReader reader = new BufferedReader(new FileReader("vehicles.txt"))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] data = line.split(",");
+            // To ensure valid format
+            if (data.length < 5) continue;  
+
+            String make = data[0].trim();
+            String model = data[1].trim();
+            int year = Integer.parseInt(data[2].trim());
+            String licensePlate = data[3].trim();
+            String type = data[4].trim(); // This should specify "Car" or "Motorcycle"
+
+            Vehicle vehicle;
+            if (type.equalsIgnoreCase("Car")) {
+                int numSeats = Integer.parseInt(data[5].trim());
+                vehicle = new Car(make, model, year, numSeats);
+            } else if (type.equalsIgnoreCase("Motorcycle")) {
+                boolean hasSidecar = Boolean.parseBoolean(data[5].trim());
+                vehicle = new Motorcycle(make, model, year, hasSidecar);
+            } else {
+                System.out.println("Unknown vehicle type: " + type);
+                continue;
+            }
+
+        vehicles.add(vehicle);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+
+// Load customers from customers.txt
+try (BufferedReader br = new BufferedReader(new FileReader("customers.txt"))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        // Split the line to get the details of the customer (assuming CSV format)
+        String[] customerDetails = line.split(",");
+        int customerId = Integer.parseInt(customerDetails[0].trim());
+        String customerName = customerDetails[1].trim();
+        String customerEmail = customerDetails[2].trim();
+        
+        // Create a new Customer object and add it to the list
+        Customer customer = new Customer(customerId, customerName);
+        customers.add(customer);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}
+
+// Load rental records from rental_records.txt
+try (BufferedReader br = new BufferedReader(new FileReader("rental_records.txt"))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        // Split the line to get the rental record details (assuming CSV format)
+        String[] recordDetails = line.split(",");
+        String vehiclePlate = recordDetails[0].trim();
+        int customerId = Integer.parseInt(recordDetails[1].trim());
+        LocalDate rentalDate = LocalDate.parse(recordDetails[2].trim());
+        double amount = Double.parseDouble(recordDetails[3].trim());
+        String type = recordDetails[4].trim();
+
 }
