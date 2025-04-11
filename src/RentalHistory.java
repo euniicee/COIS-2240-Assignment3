@@ -31,4 +31,7 @@ public class RentalHistory {
         }
         return result;
     }
+    public void clear() {
+        rentalRecords.clear();
+    }
 }
