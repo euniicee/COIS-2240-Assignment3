@@ -111,7 +111,20 @@ public class RentalSystem {
         saveCustomer(customer);  
         return true;
     }
+    public void reset() {
+        vehicles.clear();
+        customers.clear();
+        rentalHistory.clear();
 
+        // Clear the content of files to prevent errors from old/invalid data
+        try {
+            new PrintWriter("vehicles.txt").close();
+            new PrintWriter("customers.txt").close();
+            new PrintWriter("rental_records.txt").close();
+        } catch (IOException e) {
+            System.err.println("Error clearing files: " + e.getMessage());
+        }
+    }
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
     	amount = 500;
         if (vehicle.getStatus() == Vehicle.VehicleStatus.AVAILABLE) {
@@ -123,7 +136,15 @@ public class RentalSystem {
             System.out.println("Vehicle is not available for renting.");
         }
     }
-
+//rent method for testing
+    public boolean rentVehicle(Vehicle vehicle, Customer customer) {
+    	if(vehicle.getStatus() == Vehicle.VehicleStatus.AVAILABLE) {
+    		vehicle.setStatus(Vehicle.VehicleStatus.RENTED);
+    		rentalHistory.addRecord(new RentalRecord(vehicle, customer, LocalDate.now(), 500, "RENT"));
+    		return true;
+    	}
+		return false;
+    }
     public void returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
     	extraFees = 200;
         if (vehicle.getStatus() == Vehicle.VehicleStatus.RENTED) {
@@ -135,6 +156,15 @@ public class RentalSystem {
             System.out.println("Vehicle is not rented.");
         }
     }    
+    //return method for testing 
+    public boolean returnVehicle(Vehicle vehicle, Customer customer) {
+    	if(vehicle.getStatus() == Vehicle.VehicleStatus.RENTED) {
+    		vehicle.setStatus(Vehicle.VehicleStatus.AVAILABLE);
+    		rentalHistory.addRecord(new RentalRecord(vehicle, customer, LocalDate.now(), 200, "RETURN"));
+    		return true;
+    	}
+		return false;
+    }
 
     public void displayAvailableVehicles() {
     	System.out.println("|     Type         |\tPlate\t|\tMake\t|\tModel\t|\tYear\t|");
@@ -196,7 +226,8 @@ public class RentalSystem {
     	    String line;
     	    while ((line = reader.readLine()) != null) {
     	        // Split the line into fields.
-    	        String[] data = line.split(",");
+    	        try {
+    	    	String[] data = line.split(",");
     	        
     	        // Determine if we have the detailed format (6 fields) or the simpler one (4 fields).
     	        String licensePlate;
@@ -213,6 +244,7 @@ public class RentalSystem {
     	            year = Integer.parseInt(data[3].trim());
     	            // Assuming type is at index 4 and extra details (like number of seats) at index 5.
     	            // Here we handle only cars as an example.
+    	            int seats = Integer.parseInt(data[5].trim());
     	            vehicle = new Car(make, model, year, Integer.parseInt(data[5].trim()));
     	        } else if (data.length >= 4) {
     	            // Simple format assumed: licensePlate, make, model, year.
@@ -236,7 +268,11 @@ public class RentalSystem {
     	            vehicles.add(vehicle);
     	        } else {
     	            // Optionally, print a debug message to indicate that a duplicate was skipped.
-    	            // System.out.println("Duplicate found and skipped: " + licensePlate);
+    	             System.out.println("Duplicate found and skipped: " + licensePlate);
+    	        	
+    	        }
+    	        }catch (Exception e) {
+    	        	System.out.println("Skipping invalid line in vehicles.txt" + e.getMessage());
     	        }
     	    }
     	} catch (IOException e) {
