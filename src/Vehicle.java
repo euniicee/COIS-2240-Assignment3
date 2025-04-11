@@ -1,3 +1,5 @@
+import java.util.function.BooleanSupplier;
+
 public abstract class Vehicle {
     private String licensePlate;
     private String make;
@@ -28,7 +30,16 @@ public abstract class Vehicle {
     }
 
     public void setLicensePlate(String plate) {
+    	//check if the provided plate is valid
+    	if(!isValidPlate(plate)) {
+    		//if it is not valid throw an exception
+    		throw new IllegalArgumentException("Invalid license plate format");
+    	}
         this.licensePlate = plate == null ? null : plate.toUpperCase();
+    }
+    //to check if the license plate is valid
+    private boolean isValidPlate(String plate) {
+    	return plate != null && !plate.isEmpty() && plate.matches("^[A-Z]{3}\\D{3}$");
     }
 
     public void setStatus(VehicleStatus status) {
@@ -48,5 +59,8 @@ public abstract class Vehicle {
     public String getInfo() {
         return "| " + licensePlate + " | " + make + " | " + model + " | " + year + " | " + status + " |";
     }
+   
+
+	
 
 }
