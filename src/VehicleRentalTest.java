@@ -1,4 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -52,8 +55,6 @@ public class VehicleRentalTest {
 
     
     @Test
-   
-    
     void testRentAndReturnVehicle() {
         // Set a valid plate
          assertDoesNotThrow(() -> vehicle.setLicensePlate("AAA123"));
@@ -78,5 +79,22 @@ public class VehicleRentalTest {
         // Try returning again
         boolean returnAgain = system.returnVehicle(vehicle, customer);
         assertFalse(returnAgain);
+    }
+    @Test
+    public void testSingletonRentalSystem() throws Exception {
+        // Access the constructor of RentalSystem using reflection
+        Constructor<RentalSystem> constructor = RentalSystem.class.getDeclaredConstructor();
+
+        // Get the access modifier of the constructor (should be private)
+        int modifiers = constructor.getModifiers();
+
+        // Assert that the constructor is private
+        assertTrue(Modifier.isPrivate(modifiers), "Constructor should be private to enforce Singleton pattern.");
+
+        // Use getInstance() to get the singleton instance
+        RentalSystem instance = RentalSystem.getInstance();
+
+        // Assert the instance is not null
+        assertNotNull(instance, "Singleton instance should not be null.");
     }
 }
